@@ -22,6 +22,26 @@
   font-size: large;
 }
 
+#form-input {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.resize {
+  width: 100%;
+  height: 100%;
+}
+
+.howto {
+  width: 100%;
+}
+
+.inline {
+  display: inline-grid;
+}
+
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
