@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "babel-preset-es2017": "^6.24.1",
     "isomorphic-fetch": "^2.2.1",
+    "moment": "^2.19.1",
     "mongoose": "^4.12.4",
     "request": "^2.83.0"
   },

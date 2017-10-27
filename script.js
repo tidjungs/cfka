@@ -1,13 +1,14 @@
 import request from 'request';
+import mongoose from 'mongoose';
+import moment from 'moment';
 import noti from './noti';
-// import mongoose from 'mongoose';
 import Fetch from './src/model';
 
-// mongoose.Promise = Promise;
+mongoose.Promise = Promise;
 const keyword = 'อาบน้ำ';
 const access_token = 'EAAB5ij8RTdUBAB8tda1qi6OPbJOEdyhOAVzcJqsSYNPhEm1HQpPoN1WEHKRChC9S005ZClUDF5c6Ylx7SYw8uPOZBeukm466P2EjQzGoNWqZAmHy7x3e1T5KrIvleqYHqAvdHXGoFnSm6et5Jx9xJAhv6M3hzMZD';
 
-// mongoose.connect('mongodb://eveem:12345e@ds229415.mlab.com:29415/cfka');
+mongoose.connect('mongodb://eveem:12345e@ds229415.mlab.com:29415/cfka');
 
 
 const doRequest = url => new Promise((resolve, reject) => {
@@ -21,42 +22,50 @@ const doRequest = url => new Promise((resolve, reject) => {
 });
 
 const doQuery = () => new Promise((resolve, reject) => {
-  Fetch.find({}, (err, data) => {
-    console.log(data)
-    if (!err) resolve(data);
+  Fetch.find({}, (err, fetch) => {
+    if (!err) resolve(fetch);
     reject(err);
   });
 });
 
+const updateTimeStamp = (id, updatedTime) => new Promise((resolve, reject) => {
+  Fetch.update({ _id: id }, { $set: { last_fetch: updatedTime } }, (err) => {
+    resolve();
+  })
+})
+
+const checkTimeStamp = (a, b) => moment(a).unix() > moment(b).unix();
 
 setInterval(() => {
-  // console.log('request');
-  // doQuery()
-  // .then(data => {
-  //   console.log(data)
-  // }).catch(() => {
-
-  // });
-  doRequest('https://graph.facebook.com/v2.10/1924443867832338/feed?access_token=' + access_token)
-  .then(body => {
-    const { data } = JSON.parse(body);
-    data.forEach(post => {
-      if (post.message && post.message.indexOf(keyword) !== -1) {
-        console.log('success');
-        noti({
-          "recipient": {
-            "id": "1688711797867394"
-          },
-          "message": {
-            "text": 'เจอแล้ว!'
+  console.log('fetch')
+  doQuery()
+  .then(fetch => {
+    fetch.forEach(f => {
+      const { _id, group_id, user_id } = f;   
+      doRequest('https://graph.facebook.com/v2.10/' + group_id + '/feed?access_token=' + access_token)
+      .then(body => {
+        const { data } = JSON.parse(body);
+        data.forEach(post => {
+          if (post.message && post.message.indexOf(keyword) !== -1 && checkTimeStamp(post.updated_time, f.last_fetch)) {
+            console.log('success', post);
+            updateTimeStamp(_id, post.updated_time)
+            .then(() => {
+              noti({
+                "recipient": {
+                  "id": user_id
+                },
+                "message": {
+                  "text": 'เจอแล้ว!'
+                }
+              })
+            })
           }
-        })
-        // noti('t_100005738045773', post.message);
-      }
+        });
+      });
     });
   }).catch(err => {
-    console.log(err + "dsadsadsa");
+    console.log(err);    
   });
-}, 2000);
+}, 5000);
 
 

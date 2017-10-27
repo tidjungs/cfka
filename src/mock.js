@@ -7,6 +7,6 @@ Fetch.create({
 	keyword: 'อาบน้ำ',
 	group_id: '1924443867832338',
 	group_name: 'Facebook Developer Circle: Bangkok',
-	user_id: '1676042129076849',
+	user_id: '1688711797867394',
 	last_fetch: 0
 });

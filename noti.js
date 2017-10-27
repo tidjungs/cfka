@@ -44,17 +44,9 @@ const noti = message => {
   }
 
   request(options, function(err, res, body) {
-    console.log(err, res)
-    
+    console.log(res.statusCode);
   })
 
-  // request.post(`https://graph.facebook.com/v2.10/me/messages`, {
-  //   json: true,    
-  //   message: JSON.stringify(message),
-  //   access_token: 'EAAB4baPzk4QBAMsTzuNZAdxZB2gccCnqyH5CSJnt8ptEwtMsIy60mycZCxlGN90oAqBSTLmkfNO4xZBhFYbgfcJxt6HOrBqLznLQKPwozEWPLEE5iPriRagka3YRa2XwLaQFAJZCTdi82rqUJCcxHi0ZCiRZAZCb1NkmwcThYMuxQKr6MK7hpGaY'
-  // }, function(err, res) {
-  //   console.log(err, res.statusCode)
-  // })
 }
 
 export default noti;
