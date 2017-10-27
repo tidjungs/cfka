@@ -65,7 +65,7 @@ class App extends Component {
             <button className="btn btn-secondary">submit</button>
           </div>
           <div className="howto from-inline">
-              <p clasNames="inline">You must send message to&nbsp;</p>
+              <p className="inline">You must send message to&nbsp;</p>
               <a className="inline" href="https://www.messenger.com/t/502138216822140"> our page</a>
               <p className="inline">&nbsp;first !! </p>
           </div>
