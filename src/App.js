@@ -51,7 +51,8 @@ handleChange = e => {
   constructor(props) {
     super(props)
     this.state = {
-      userName: ''
+      userName: '',
+      accessToken: ''
     }
 
     // window.fbAsyncInit = function() {
@@ -90,8 +91,11 @@ handleChange = e => {
 
   responseFacebook(response) {
     console.log(response);
-    this.setState({userName: response.name})
-    console.log(this.state.userName)
+    this.setState({
+      userName: response.name,
+      accessToken: response.accessToken
+    })
+    console.log(this.state.userName, this.state.accessToken)
   }
 
   render() {
