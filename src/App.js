@@ -16,11 +16,11 @@ class App extends Component {
   sendRequest(){
     axios.post('localhost:5000/fetch', {
       param: {
-        name:,
-        user_id:,
-        group_id:,
-        keyword: keytext,
-        access_token: 
+        name:"",
+        user_id:"",
+        group_id:"",
+        keyword: "keytext",
+        access_token: ""
       }
     })
   }
@@ -54,39 +54,39 @@ handleChange = e => {
       userName: ''
     }
 
-    window.fbAsyncInit = function() {
-      FB.init({
-        appId      : '132412297417604',
-        cookie     : true,
-        xfbml      : true,
-        version    : 'v2.10'
-      });
-    }
+    // window.fbAsyncInit = function() {
+    //   FB.init({
+    //     appId      : '132412297417604',
+    //     cookie     : true,
+    //     xfbml      : true,
+    //     version    : 'v2.10'
+    //   });
+    // }
   }
 
-  statusChangeCallback(response) {
-    console.log('statusChangeCallback');
-    console.log(response);
-    if (response.status === 'connected') {
-      console.log('you are already login')
-      this.testAPI();
-    } else {
-      console.log('please login')
-    }
-  }
-
-  checkLoginState() {
-    FB.getLoginStatus(function(response) {
-      this.statusChangeCallback(response);
-    });
-  }
-
-  testAPI() {
-    console.log('Welcome!  Fetching your information.... ');
-    FB.api('/me', function(response) {
-      console.log('Successful login for: ' + response.name);
-    });
-  }
+  // statusChangeCallback(response) {
+  //   console.log('statusChangeCallback');
+  //   console.log(response);
+  //   if (response.status === 'connected') {
+  //     console.log('you are already login')
+  //     this.testAPI();
+  //   } else {
+  //     console.log('please login')
+  //   }
+  // }
+  //
+  // checkLoginState() {
+  //   FB.getLoginStatus(function(response) {
+  //     this.statusChangeCallback(response);
+  //   });
+  // }
+  //
+  // testAPI() {
+  //   console.log('Welcome!  Fetching your information.... ');
+  //   FB.api('/me', function(response) {
+  //     console.log('Successful login for: ' + response.name);
+  //   });
+  // }
 
   responseFacebook(response) {
     console.log(response);
@@ -95,7 +95,7 @@ handleChange = e => {
   }
 
   render() {
-    if(this.state)
+    if(this.state.userName)
       return (
         <div className="App">
           <div className="logo">
