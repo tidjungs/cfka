@@ -52,6 +52,38 @@ const updateUserId = function(db, data, callback) {
   // })
 // }
 
+const listKeywordGroup = (db, messenger_id, callback) => {
+  const fetches = db.collection('fetches').aggregate([
+    {
+        '$lookup': {
+            'from': 'profiles',
+            'localField': 'firstName',
+            'foreignField': 'info.first_name',
+            'as': 'profile'
+        }
+    },
+    {
+        '$match': {
+          'profile.messenger_id': messenger_id
+        }
+    },
+  ]).toArray().then((res) => {
+    console.log(res);
+    callback(res);
+  });
+
+  // console.log(fetches);
+
+  // cursor.each(function(err, doc) {
+  //    if (doc != null) {
+  //      callback(db, doc)
+  //      count++;
+  //    } else {
+  //      done(count)
+  //    }
+  // })
+}
+
 app.use(bodyParser.json())
 app.get('/', (req, res) => {
   const messenger_id = '1548964558517548'
@@ -62,13 +94,17 @@ app.get('/', (req, res) => {
     return res.json()
   }).then((json) => {
     MongoClient.connect(MongoUrl, function(err, db) {
-      let doc = {
-        'messenger_id': messenger_id,
-        'info': json
-      }
+      // let doc = {
+      //   'messenger_id': messenger_id,
+      //   'info': json
+      // }
 
-      insertProfile(db, doc, () => {
-        console.log('Insert success')
+      // insertProfile(db, doc, () => {
+      //   console.log('Insert success')
+      // })
+
+      listKeywordGroup(db, messenger_id, () => {
+        console.log('group');
       })
     })
   })
@@ -104,7 +140,7 @@ app.post('/facebook/webhook', (req, res) => {
           console.log(event.referral)
 
           if (event.referral.ref === 'hello') {
-            body.message = { text: 'Subscribed, thank you.' }
+            // body.message = { text: 'Subscribed, thank you.' }
 
             fetch('https://graph.facebook.com/v2.10/' + event.sender.id + '?access_token=' + TOKEN_PAGE)
             .then((res) => {
@@ -152,6 +188,20 @@ app.post('/facebook/webhook', (req, res) => {
           } else if (event.message && event.message.text === '#addkeyword') {
             /* For handle ADD */
           } else if (event.message && event.message.text === '#listkeyword') {
+            MongoClient.connect(MongoUrl, function(err, db) {
+              listKeywordGroup(db, event.sender.id, (lists) => {
+                body.message = { text: lists.map((list) => (`keywords: ${list.keyword}\ngroup: www.facebook.com/${list.group_id}\n\n`)).join('') }
+
+                fetch('https://graph.facebook.com/v2.10/me/messages?access_token=' + TOKEN_PAGE, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(body)
+                })
+              })
+            });
+
             /* For handle LIST */
           } else if (event.message && event.message.text === '#deletekeyword') {
             /* For handle DELETE */
