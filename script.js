@@ -1,12 +1,12 @@
 import request from 'request';
 import mongoose from 'mongoose';
 import moment from 'moment';
-import noti from './noti';
+import noti from './src/noti';
 import Fetch from './src/model';
 
 mongoose.Promise = Promise;
-const keyword = 'อาบน้ำ';
-const access_token = 'EAAB5ij8RTdUBAB8tda1qi6OPbJOEdyhOAVzcJqsSYNPhEm1HQpPoN1WEHKRChC9S005ZClUDF5c6Ylx7SYw8uPOZBeukm466P2EjQzGoNWqZAmHy7x3e1T5KrIvleqYHqAvdHXGoFnSm6et5Jx9xJAhv6M3hzMZD';
+// const keyword = 'อาบน้ำ';
+// const access_token = 'EAAB5ij8RTdUBAB8tda1qi6OPbJOEdyhOAVzcJqsSYNPhEm1HQpPoN1WEHKRChC9S005ZClUDF5c6Ylx7SYw8uPOZBeukm466P2EjQzGoNWqZAmHy7x3e1T5KrIvleqYHqAvdHXGoFnSm6et5Jx9xJAhv6M3hzMZD';
 
 mongoose.connect('mongodb://eveem:12345e@ds229415.mlab.com:29415/cfka');
 
@@ -46,7 +46,7 @@ setInterval(() => {
   doQuery()
   .then(fetch => {
     fetch.forEach(f => {
-      const { _id, group_id, user_id } = f;   
+      const { _id, group_id, user_id, keyword, access_token } = f;   
       doRequest('https://graph.facebook.com/v2.10/' + group_id + '/feed?access_token=' + access_token)
       .then(body => {
         const { data } = JSON.parse(body);
