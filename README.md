@@ -28,3 +28,13 @@ https://developers.facebook.com/apps/132412297417604/webhooks/
 yarn install
 ```
 
+start api server on port 5000
+```
+yarn dev
+```
+
+start bot fetch
+```
+yarn bot
+```
+
