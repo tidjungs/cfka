@@ -1,7 +1,8 @@
 var mongoose = require('mongoose'); 
 
 var FetchSchema = new mongoose.Schema({
-  name: String,
+  firstName: String,
+  lastName: String,
   keyword: String,
   group_id: String,
   user_id: String,

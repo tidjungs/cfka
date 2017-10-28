@@ -21,7 +21,8 @@ app.post('/fetch/', (req, res) => {
   Fetch.findOne({ 'user_id': req.body.user_id }, (err, data) => {
     if (!data) {
       Fetch.create({
-        name: req.body.name,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         keyword: req.body.keyword,
         group_id: req.body.group_id,
         user_id: req.body.user_id,
@@ -39,7 +40,7 @@ app.post('/fetch/', (req, res) => {
 });
 
 app.post('/update-user-id/', (req, res) => {
-  Fetch.update({ 'name': req.body.name }, { $set: { user_id: req.body.user_id } }, (err, fetch) => {
+  Fetch.update({ 'firstName': req.body.firstName, 'lastName': req.body.lastName }, { $set: { user_id: req.body.user_id } }, (err, fetch) => {
     res.send(fetch);
   });
 });

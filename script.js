@@ -46,7 +46,7 @@ setInterval(() => {
   doQuery()
   .then(fetch => {
     fetch.forEach(f => {
-      const { _id, group_id, user_id, keyword, access_token } = f;   
+      const { _id, group_id, user_id, keyword, access_token } = f;        
       doRequest('https://graph.facebook.com/v2.10/' + group_id + '/feed?access_token=' + access_token)
       .then(body => {
         const { data } = JSON.parse(body);
