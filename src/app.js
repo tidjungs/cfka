@@ -19,7 +19,6 @@ app.get('/fetch/', (req, res) => {
 
 app.post('/fetch/', (req, res) => {
   Fetch.findOne({ 'user_id': req.body.user_id }, (err, data) => {
-    console.log(data)
     if (!data) {
       Fetch.create({
         name: req.body.name,
@@ -36,6 +35,15 @@ app.post('/fetch/', (req, res) => {
         res.send(fetch);
       });
     }
+  });
+});
+
+app.post('/fetch-delete/', (req, res) => {
+  Fetch.remove({ 'user_id': req.body.user_id }, err => {
+    if (!err)
+      res.send('success');
+    else
+      res.send('error');
   });
 });
 
