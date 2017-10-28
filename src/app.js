@@ -57,6 +57,3 @@ app.post('/fetch-delete/', (req, res) => {
 app.listen(5000, function() {
   console.log('Express server listening on port ' + 5000);
 });
-
-
-

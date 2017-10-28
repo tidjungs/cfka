@@ -6,28 +6,71 @@ const app = express()
 const VERIFY_TOKEN = 'this_is_token'
 const TOKEN_PAGE = 'EAAB4baPzk4QBAMsTzuNZAdxZB2gccCnqyH5CSJnt8ptEwtMsIy60mycZCxlGN90oAqBSTLmkfNO4xZBhFYbgfcJxt6HOrBqLznLQKPwozEWPLEE5iPriRagka3YRa2XwLaQFAJZCTdi82rqUJCcxHi0ZCiRZAZCb1NkmwcThYMuxQKr6MK7hpGaY'
 
+const MongoClient = require('mongodb').MongoClient
+const MongoUrl = 'mongodb://eveem:12345e@ds229415.mlab.com:29415/cfka';
+
+const insertProfile = (db, doc, callback) => {
+  const collection = db.collection('profiles')
+
+  collection.insertOne(doc, (err, result) => {
+    if (err) {
+      console.log(err)
+    }
+
+    console.log('Insert Profile')
+    callback()
+  })
+};
+
+const updateUserId = function(db, data, callback) {
+  const collection = db.collection('fetches')
+  const condition = {'firstName': data.first_name, 'lastName': data.last_name};
+
+  collection.updateOne(condition, {$set: { "user_id": data.user_id }}, function(err, result) {
+    if (err) {
+      console.log(err)
+      db.close()
+    }
+
+    callback()
+  })
+}
+
+// const findProfile = (db, messenger_id, callback) => {
+  // let profile = db.collection('profile').find({'messenger_id': messenger_id}).toArray()
+
+  // console.log(profile)
+  // callback();
+
+  // cursor.each(function(err, doc) {
+  //    if (doc != null) {
+  //      callback(db, doc)
+  //      count++;
+  //    } else {
+  //      done(count)
+  //    }
+  // })
+// }
+
 app.use(bodyParser.json())
 app.get('/', (req, res) => {
+  const messenger_id = '1548964558517548'
+  const url = 'https://graph.facebook.com/v2.10/' + messenger_id + '?access_token=' + TOKEN_PAGE
 
-  const body = {
-    'recipient': {
-      'id': '1548964558517548'
-    },
-    'message': {
-      'text': 'สวัสดี2'
-    }
-  };
-
-  fetch('https://graph.facebook.com/v2.9/me/messages?access_token=' + TOKEN_PAGE, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(body)
-  })
+  fetch(url)
   .then((res) => {
-      console.log(res.ok)
-      console.log(res.status)
+    return res.json()
+  }).then((json) => {
+    MongoClient.connect(MongoUrl, function(err, db) {
+      let doc = {
+        'messenger_id': messenger_id,
+        'info': json
+      }
+
+      insertProfile(db, doc, () => {
+        console.log('Insert success')
+      })
+    })
   })
 
   res.send('New, Hello World!')
@@ -58,21 +101,44 @@ app.post('/facebook/webhook', (req, res) => {
         };
 
         if (event.referral) {
-          console.log(event.referral);
+          console.log(event.referral)
 
           if (event.referral.ref === 'hello') {
-            body.message = { text: '[Referral] Thank you.' }
+            body.message = { text: 'Subscribed, thank you.' }
+
+            fetch('https://graph.facebook.com/v2.10/' + event.sender.id + '?access_token=' + TOKEN_PAGE)
+            .then((res) => {
+              return res.json()
+            }).then((json) => {
+              MongoClient.connect(MongoUrl, function(err, db) {
+                let doc = {
+                  'messenger_id': event.sender.id,
+                  'info': json
+                }
+
+                insertProfile(db, doc, () => {
+                  console.log('Insert success')
+                })
+              })
+            })
+
+            fetch('https://graph.facebook.com/v2.10/me/messages?access_token=' + TOKEN_PAGE, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(body)
+            })
           }
 
         } else if (event.message || event.postback) {
           if (event.message && event.message.text === 'cfka') {
-            console.log('1')
             body.message = {
               'attachment':{
                 'type':'template',
                 'payload':{
                   'template_type':'button',
-                  'text':'CFKA Register?',
+                  'text':'Do you want to subscribe, CFKA?',
                   'buttons':[
                     {
                       'type':'postback',
@@ -83,8 +149,31 @@ app.post('/facebook/webhook', (req, res) => {
                 }
               }
             }
+          } else if (event.message && event.message.text === '#addkeyword') {
+            /* For handle ADD */
+          } else if (event.message && event.message.text === '#listkeyword') {
+            /* For handle LIST */
+          } else if (event.message && event.message.text === '#deletekeyword') {
+            /* For handle DELETE */
           } else if (event.postback && event.postback.payload === 'CONFIRM_REGISTER') {
-            body.message = { text: '[Confirms] Thank you.' }
+            body.message = { text: 'Subscribed, thank you.' }
+
+            fetch('https://graph.facebook.com/v2.10/' + event.sender.id + '?access_token=' + TOKEN_PAGE)
+            .then((res) => {
+              return res.json()
+            }).then((json) => {
+              MongoClient.connect(MongoUrl, function(err, db) {
+                let doc = {
+                  'messenger_id': event.sender.id,
+                  'info': json
+                }
+
+                insertProfile(db, doc, () => {
+                  console.log('Insert success')
+                })
+              })
+            })
+
           } else if (event.postback && event.postback.payload === 'register') {
             body.message = { text: '[Register] Thank you.' }
           } else {
