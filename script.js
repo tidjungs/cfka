@@ -22,7 +22,7 @@ const doRequest = url => new Promise((resolve, reject) => {
 });
 
 const doQuery = () => new Promise((resolve, reject) => {
-  Fetch.find({}, (err, fetch) => {
+  Fetch.find({ }, (err, fetch) => {
     if (!err) resolve(fetch);
     reject(err);
   });
@@ -46,7 +46,9 @@ setInterval(() => {
   doQuery()
   .then(fetch => {
     fetch.forEach(f => {
-      const { _id, group_id, user_id, keyword, access_token } = f;        
+      const { _id, group_id, user_id, keyword, access_token } = f;     
+      if (!user_id)
+        continue;   
       doRequest('https://graph.facebook.com/v2.10/' + group_id + '/feed?access_token=' + access_token)
       .then(body => {
         const { data } = JSON.parse(body);
