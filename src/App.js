@@ -16,11 +16,19 @@ class App extends Component {
   sendRequest(){
     axios.post('localhost:5000/fetch', {
       param: {
+<<<<<<< HEAD
         name:"",
         user_id:"",
         group_id:"",
         keyword: "keytext",
         access_token: ""
+=======
+        // name:,
+        // user_id:,
+        // group_id:,
+        // keyword:,
+        // access_token:
+>>>>>>> dac4de1bfcd97be0005a12c425b2a96f025c9cd7
       }
     })
   }
@@ -106,14 +114,25 @@ handleChange = e => {
             <img className="resize" src={logo}/>
           </div>
           <div className="form-inline" id="form-input">
-            <input className="form-control mb-2 mr-sm-2 mb-sm-0" id="input-text" type="text" placeholder="Key word"></input>
-            <input className="form-control mb-2 mr-sm-2 mb-sm-0" id="input-text" type="text" placeholder="Group link"></input>
-            <button className="btn btn-secondary">submit</button>
-          </div>
-          <div className="howto from-inline">
-              <p className="inline">You must send message to&nbsp;</p>
-              <a className="inline" href="https://www.messenger.com/t/502138216822140"> our page</a>
-              <p className="inline">&nbsp;first !! </p>
+            <input
+              className="form-control mb-2 mr-sm-2 mb-sm-0"
+              id="input-text"
+              type="text"
+              placeholder="Key word"
+              value={this.state.keytext}
+              onChange={this.handleChange}></input>
+            <input
+              className="form-control mb-2 mr-sm-2 mb-sm-0"
+              id="input-text"
+              type="text"
+              placeholder="Group link"
+              value={this.state.linktext}
+              onChange={this.handelChange}></input>
+            <a href="https://m.me/502138216822140?ref=hello">
+              <button
+                className="btn btn-secondary"
+                onClick={this.onclick}>Get start</button>
+            </a>
           </div>
         </div>
       )
