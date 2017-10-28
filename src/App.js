@@ -16,19 +16,11 @@ class App extends Component {
   sendRequest(){
     axios.post('localhost:5000/fetch', {
       param: {
-<<<<<<< HEAD
-        name:"",
-        user_id:"",
-        group_id:"",
-        keyword: "keytext",
-        access_token: ""
-=======
         // name:,
         // user_id:,
         // group_id:,
         // keyword:,
         // access_token:
->>>>>>> dac4de1bfcd97be0005a12c425b2a96f025c9cd7
       }
     })
   }
