@@ -36,6 +36,11 @@ const updateTimeStamp = (id, updatedTime) => new Promise((resolve, reject) => {
 
 const checkTimeStamp = (a, b) => moment(a).unix() > moment(b).unix();
 
+const getPostUrl = id => {
+  const sid = id.split('_');
+  return `https://www.facebook.com/groups/${sid[0]}/permalink/${sid[1]}/`
+}
+
 setInterval(() => {
   console.log('fetch')
   doQuery()
@@ -55,7 +60,7 @@ setInterval(() => {
                   "id": user_id
                 },
                 "message": {
-                  "text": 'เจอแล้ว!'
+                  "text": 'เจอแล้ว! \n' + getPostUrl(post.id)
                 }
               })
             })
@@ -66,6 +71,6 @@ setInterval(() => {
   }).catch(err => {
     console.log(err);    
   });
-}, 5000);
+}, 2000);
 
 

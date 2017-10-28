@@ -18,7 +18,7 @@ app.get('/fetch/', (req, res) => {
 app.post('/fetch/', (req, res) => {
   Fetch.create({
     name: req.body.name,
-    keyword: '',
+    keyword: req.body.keyword,
     group_id: req.body.group_id,
     user_id: req.body.user_id,
     access_token: req.body.access_token,
