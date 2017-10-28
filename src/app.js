@@ -38,6 +38,12 @@ app.post('/fetch/', (req, res) => {
   });
 });
 
+app.post('/update-user-id/', (req, res) => {
+  Fetch.update({ 'name': req.body.name }, { $set: { user_id: req.body.user_id } }, (err, fetch) => {
+    res.send(fetch);
+  });
+});
+
 app.post('/fetch-delete/', (req, res) => {
   Fetch.remove({ 'user_id': req.body.user_id }, err => {
     if (!err)
