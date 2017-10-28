@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import moment from 'moment';
 import cors from 'cors';
 import Fetch from './model';
-const bodyParser = require('body-parser');
+import bodyParser from 'body-parser';
 
 
 mongoose.connect('mongodb://eveem:12345e@ds229415.mlab.com:29415/cfka');
@@ -18,21 +18,32 @@ app.get('/fetch/', (req, res) => {
 });
 
 app.post('/fetch/', (req, res) => {
-  Fetch.findOne({ 'user_id': req.body.user_id }, (err, data) => {
-    if (!data) {
+  const data = JSON.parse(Object.keys(req.body)[0]);
+  console.log(data.firstName);
+  Fetch.findOne({ 
+    'firstName': data.firstName, 
+    'lastName': data.lastName,
+    'keyword': data.keyword,
+    'group_id': data.group_id
+  }, (err, response) => {
+    if (!response) {
       Fetch.create({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        keyword: req.body.keyword,
-        group_id: req.body.group_id,
-        user_id: req.body.user_id,
-        access_token: req.body.access_token,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        keyword: data.keyword,
+        group_id: data.group_id,
+        access_token: data.access_token,
         last_fetch: moment(),
       }, (err, fetch) => {
         res.send(fetch);
       });
     } else {
-      Fetch.update({ 'user_id': req.body.user_id }, { $set: { keyword: req.body.keyword } }, (err, fetch) => {
+      Fetch.update({ 
+        'firstName': data.firstName, 
+        'lastName': data.lastName,
+        'keyword': data.keyword,
+        'group_id': data.group_id
+       }, { $set: { keyword: data.keyword } }, (err, fetch) => {
         res.send(fetch);
       });
     }

@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import moment from 'moment';
 import noti from './src/noti';
 import Fetch from './src/model';
+import Profile from './src/profile';
 
 mongoose.Promise = Promise;
 // const keyword = 'อาบน้ำ';
@@ -28,6 +29,14 @@ const doQuery = () => new Promise((resolve, reject) => {
   });
 });
 
+const getIdFromProfile = (firstName, lastName) => new Promise((resolve, reject) => {
+  const condition = { 'info.first_name': firstName, 'info.last_name': lastName };
+  Profile.findOne(condition, (err, profile) => {
+    if (!err) resolve(profile.messenger_id);
+    reject(err);
+  })
+});
+
 const updateTimeStamp = (id, updatedTime) => new Promise((resolve, reject) => {
   Fetch.update({ _id: id }, { $set: { last_fetch: updatedTime } }, (err) => {
     resolve();
@@ -46,27 +55,33 @@ setInterval(() => {
   doQuery()
   .then(fetch => {
     fetch.forEach(f => {
-      const { _id, group_id, user_id, keyword, access_token } = f;        
-      doRequest('https://graph.facebook.com/v2.10/' + group_id + '/feed?access_token=' + access_token)
-      .then(body => {
-        const { data } = JSON.parse(body);
-        data.forEach(post => {
-          if (post.message && post.message.indexOf(keyword) !== -1 && checkTimeStamp(post.updated_time, f.last_fetch)) {
-            console.log('success', post);
-            updateTimeStamp(_id, post.updated_time)
-            .then(() => {
-              noti({
-                "recipient": {
-                  "id": user_id
-                },
-                "message": {
-                  "text": 'เจอแล้ว! \n' + getPostUrl(post.id)
-                }
+      const { _id, group_id, keyword, access_token, firstName, lastName } = f;
+      getIdFromProfile(firstName, lastName)
+      .then(chatId => {
+        console.log(chatId)
+        doRequest('https://graph.facebook.com/v2.10/' + group_id + '/feed?access_token=' + access_token)
+        .then(body => {
+          const { data } = JSON.parse(body);
+          data.forEach(post => {
+            console.log(post.message)
+            console.log(">>>>>>", keyword)
+            if (post.message && post.message.indexOf(keyword) !== -1 && checkTimeStamp(post.updated_time, f.last_fetch)) {
+              console.log('success', post);
+              updateTimeStamp(_id, post.updated_time)
+              .then(() => {
+                noti({
+                  "recipient": {
+                    "id": chatId
+                  },
+                  "message": {
+                    "text": 'เจอแล้ว! \n' + getPostUrl(post.id)
+                  }
+                })
               })
-            })
-          }
+            }
+          });
         });
-      });
+      })
     });
   }).catch(err => {
     console.log(err);    
