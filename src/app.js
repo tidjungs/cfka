@@ -12,26 +12,31 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/fetch/', (req, res) => {
-  
+  Fetch.find({}, (err, data) => {
+    res.send(data);
+  })
 });
 
 app.post('/fetch/', (req, res) => {
-  Fetch.create({
-    name: req.body.name,
-    keyword: req.body.keyword,
-    group_id: req.body.group_id,
-    user_id: req.body.user_id,
-    access_token: req.body.access_token,
-    last_fetch: moment(),
-  }, (err, fetch) => {
-    res.send(fetch);
-  })
-});
-
-app.post('/fetch/update', (req, res) => {
-  Fetch.update({ _id: req.body.id }, { $set: { keyword: req.body.keyword } }, (err, fetch) => {
-    res.send(fetch);
-  })
+  Fetch.findOne({ 'user_id': req.body.user_id }, (err, data) => {
+    console.log(data)
+    if (!data) {
+      Fetch.create({
+        name: req.body.name,
+        keyword: req.body.keyword,
+        group_id: req.body.group_id,
+        user_id: req.body.user_id,
+        access_token: req.body.access_token,
+        last_fetch: moment(),
+      }, (err, fetch) => {
+        res.send(fetch);
+      });
+    } else {
+      Fetch.update({ 'user_id': req.body.user_id }, { $set: { keyword: req.body.keyword } }, (err, fetch) => {
+        res.send(fetch);
+      });
+    }
+  });
 });
 
 app.listen(5000, function() {
