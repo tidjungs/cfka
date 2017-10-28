@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import moment from 'moment';
 import noti from './src/noti';
 import Fetch from './src/model';
+import Profile from './src/profile';
 
 mongoose.Promise = Promise;
 // const keyword = 'อาบน้ำ';
@@ -29,7 +30,8 @@ const doQuery = () => new Promise((resolve, reject) => {
 });
 
 const getIdFromProfile = (firstName, lastName) => new Promise((resolve, reject) => {
-  Fetch.find({ firstName, lastName }, (err, profile) => {
+  const condition = { 'info.first_name': firstName, 'info.last_name': lastName };
+  Profile.findOne(condition, (err, profile) => {
     if (!err) resolve(profile.messenger_id);
     reject(err);
   })
@@ -56,10 +58,13 @@ setInterval(() => {
       const { _id, group_id, keyword, access_token, firstName, lastName } = f;
       getIdFromProfile(firstName, lastName)
       .then(chatId => {
+        console.log(chatId)
         doRequest('https://graph.facebook.com/v2.10/' + group_id + '/feed?access_token=' + access_token)
         .then(body => {
           const { data } = JSON.parse(body);
           data.forEach(post => {
+            console.log(post.message)
+            console.log(">>>>>>", keyword)
             if (post.message && post.message.indexOf(keyword) !== -1 && checkTimeStamp(post.updated_time, f.last_fetch)) {
               console.log('success', post);
               updateTimeStamp(_id, post.updated_time)

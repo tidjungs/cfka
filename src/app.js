@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import moment from 'moment';
 import cors from 'cors';
 import Fetch from './model';
-const bodyParser = require('body-parser');
+import bodyParser from 'body-parser';
 
 
 mongoose.connect('mongodb://eveem:12345e@ds229415.mlab.com:29415/cfka');
