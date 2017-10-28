@@ -8,10 +8,15 @@
 ## Deployment
 
 ### Setup Facebook webhook
-
+Install node_modules
 ```
 cd scripts/webhook
 yarn install
+```
+
+Start webhook callback endpoint
+```
+node app.js
 ```
 
 Start ngrox at port 3001
