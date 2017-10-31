@@ -3,11 +3,11 @@ const bodyParser = require('body-parser')
 const fetch = require('node-fetch')
 const app = express()
 
-const VERIFY_TOKEN = 'this_is_token'
-const TOKEN_PAGE = 'EAAB4baPzk4QBAMsTzuNZAdxZB2gccCnqyH5CSJnt8ptEwtMsIy60mycZCxlGN90oAqBSTLmkfNO4xZBhFYbgfcJxt6HOrBqLznLQKPwozEWPLEE5iPriRagka3YRa2XwLaQFAJZCTdi82rqUJCcxHi0ZCiRZAZCb1NkmwcThYMuxQKr6MK7hpGaY'
+const VERIFY_TOKEN = process.env.FACEBOOK_VERIFY_TOKEN
+const FACEBOOK_PAGE_TOKEN = process.env.FACEBOOK_PAGE_TOKEN
 
 const MongoClient = require('mongodb').MongoClient
-const MongoUrl = 'mongodb://eveem:12345e@ds229415.mlab.com:29415/cfka';
+const MongoUrl = process.env.MONGO_URL
 
 const insertProfile = (db, doc, callback) => {
   const collection = db.collection('profiles')
@@ -87,7 +87,7 @@ const listKeywordGroup = (db, messenger_id, callback) => {
 app.use(bodyParser.json())
 app.get('/', (req, res) => {
   const messenger_id = '1548964558517548'
-  const url = 'https://graph.facebook.com/v2.10/' + messenger_id + '?access_token=' + TOKEN_PAGE
+  const url = 'https://graph.facebook.com/v2.10/' + messenger_id + '?access_token=' + FACEBOOK_PAGE_TOKEN
 
   fetch(url)
   .then((res) => {
@@ -142,7 +142,7 @@ app.post('/facebook/webhook', (req, res) => {
           if (event.referral.ref === 'hello') {
             // body.message = { text: 'Subscribed, thank you.' }
 
-            fetch('https://graph.facebook.com/v2.10/' + event.sender.id + '?access_token=' + TOKEN_PAGE)
+            fetch('https://graph.facebook.com/v2.10/' + event.sender.id + '?access_token=' + FACEBOOK_PAGE_TOKEN)
             .then((res) => {
               return res.json()
             }).then((json) => {
@@ -158,7 +158,7 @@ app.post('/facebook/webhook', (req, res) => {
               })
             })
 
-            fetch('https://graph.facebook.com/v2.10/me/messages?access_token=' + TOKEN_PAGE, {
+            fetch('https://graph.facebook.com/v2.10/me/messages?access_token=' + FACEBOOK_PAGE_TOKEN, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -192,7 +192,7 @@ app.post('/facebook/webhook', (req, res) => {
               listKeywordGroup(db, event.sender.id, (lists) => {
                 body.message = { text: lists.map((list) => (`keywords: ${list.keyword}\ngroup: www.facebook.com/${list.group_id}\n\n`)).join('') }
 
-                fetch('https://graph.facebook.com/v2.10/me/messages?access_token=' + TOKEN_PAGE, {
+                fetch('https://graph.facebook.com/v2.10/me/messages?access_token=' + FACEBOOK_PAGE_TOKEN, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
@@ -208,7 +208,7 @@ app.post('/facebook/webhook', (req, res) => {
           } else if (event.postback && event.postback.payload === 'CONFIRM_REGISTER') {
             body.message = { text: 'Subscribed, thank you.' }
 
-            fetch('https://graph.facebook.com/v2.10/' + event.sender.id + '?access_token=' + TOKEN_PAGE)
+            fetch('https://graph.facebook.com/v2.10/' + event.sender.id + '?access_token=' + FACEBOOK_PAGE_TOKEN)
             .then((res) => {
               return res.json()
             }).then((json) => {
@@ -232,7 +232,7 @@ app.post('/facebook/webhook', (req, res) => {
         }
 
         if (body.message !== null) {
-          fetch('https://graph.facebook.com/v2.10/me/messages?access_token=' + TOKEN_PAGE, {
+          fetch('https://graph.facebook.com/v2.10/me/messages?access_token=' + FACEBOOK_PAGE_TOKEN, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'

@@ -1,9 +1,10 @@
 import request from 'request'
 
+const facebookAccessToken = process.env.FACEBOOK_ACCESS_TOKEN
 // const noti = (conversation_id, message) => {
 //   axios.post(`https://graph.facebook.com/v2.10/${conversation_id}/messages`, {
 //     message: message,
-//     access_token: 'EAAB4baPzk4QBANq0Jibli0TlH9DXQLbWAZAlORjAdT3NLAtRSklgYS0QN8hjJh6hRoIAMq4GivX5FWvomyxpf6ZCE82JsIoKwNXPy93SYZCrhp1ZBKDTCTxXkczcHEMoNBiok5hDPQPe0OrHPygED0fUmX8FBSpgCZB9guJBdVx0ZBm3mf5FREGSELgYBhmrAt6OUbxSZCJmAZDZD'
+//     access_token: accessToken
 //   })
 //   // .then(function (response) {
 //   //   console.log(response);
@@ -14,7 +15,7 @@ import request from 'request'
 // }
 
 const noti = message => {
-  const url = 'https://graph.facebook.com/v2.10/me/messages?access_token=EAAB4baPzk4QBAMsTzuNZAdxZB2gccCnqyH5CSJnt8ptEwtMsIy60mycZCxlGN90oAqBSTLmkfNO4xZBhFYbgfcJxt6HOrBqLznLQKPwozEWPLEE5iPriRagka3YRa2XwLaQFAJZCTdi82rqUJCcxHi0ZCiRZAZCb1NkmwcThYMuxQKr6MK7hpGaY';
+  const url = `https://graph.facebook.com/v2.10/me/messages?access_token=${facebookAccessToken}`;
   const options = {
     method: 'post',
     contentType: 'application/json',

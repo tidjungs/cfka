@@ -6,7 +6,7 @@ import Fetch from './model';
 import bodyParser from 'body-parser';
 
 
-mongoose.connect('mongodb://eveem:12345e@ds229415.mlab.com:29415/cfka');
+mongoose.connect(process.env.MONGO_URL);
 const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,8 +20,8 @@ app.get('/fetch/', (req, res) => {
 app.post('/fetch/', (req, res) => {
   const data = JSON.parse(Object.keys(req.body)[0]);
   console.log(data.firstName);
-  Fetch.findOne({ 
-    'firstName': data.firstName, 
+  Fetch.findOne({
+    'firstName': data.firstName,
     'lastName': data.lastName,
     'keyword': data.keyword,
     'group_id': data.group_id
@@ -38,8 +38,8 @@ app.post('/fetch/', (req, res) => {
         res.send(fetch);
       });
     } else {
-      Fetch.update({ 
-        'firstName': data.firstName, 
+      Fetch.update({
+        'firstName': data.firstName,
         'lastName': data.lastName,
         'keyword': data.keyword,
         'group_id': data.group_id
